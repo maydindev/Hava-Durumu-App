@@ -1,3 +1,4 @@
+import { useState,useEffect } from 'react'
 import './styles.css'
 
 /* Challenge
@@ -19,6 +20,7 @@ Hava durumu verileri şu anda JSX'e sabit olarak kodlanmıştır. Göreviniz, uy
 */
 
 export default function App() {
+  
   const weatherData = [
     {
       id: 0,
@@ -43,24 +45,73 @@ export default function App() {
     },
   ]
 
+
+  const [dayIndex,setDayIndex] = useState(0)
+  const [currentWeather,setCurrentWeather] = useState(weatherData[0])
+
+  
+  useEffect(() => {
+    setCurrentWeather(weatherData[dayIndex])
+  },[dayIndex])
+  
+
+  const handleNextDayWeather = () => {
+    setDayIndex((prev) => (prev + 1) % weatherData.length)
+    console.log(dayIndex)
+  }
+
+  const styleBackgroundImageByCondition = (dayIndex) => {
+    switch(weatherData[dayIndex].condition) {
+      case 'Güneşli':
+        return 'app-container güneşli-background'
+        break;
+      case 'Yağmurlu':
+        return 'app-container yağmurlu-background'
+        break;
+      case 'Karlı':
+        return 'app-container karlı-background'
+        break;
+      default:
+        return 'app-container'
+        break;
+    }
+  }
+
+  const styleIconByCondition = (dayIndex) => {
+    switch(weatherData[dayIndex].condition) {
+      case 'Güneşli':
+        return '☀️'
+        break;
+      case 'Yağmurlu':
+        return '🌧️'
+        break;
+      case 'Karlı':
+        return '❄️'
+        break;
+      default:
+        return ''
+        break;
+    }
+  }
+
   return (
-    <div className='app-container güneşli-background'>
+    <div className={styleBackgroundImageByCondition(dayIndex)}>
       <div className='weather-container'>
-        <div className='icon'>☀️</div>
-        <div className='condition-text'>Güneşli</div>
+        <div className='icon'>{styleIconByCondition(dayIndex)}</div>
+        <div className='condition-text'>{currentWeather.condition}</div>
         <div className='temp-range-container'>
           <div className='low-temp-container'>
-            <p className='low-temp-data'>20°</p>
+            <p className='low-temp-data'>{currentWeather.lowTemp}°</p>
             <p>En Düşük</p>
           </div>
           <div className='high-temp-container'>
-            <p className='high-temp-data'>38°</p>
+            <p className='high-temp-data'>{currentWeather.highTemp}°</p>
             <p>En Yüksek</p>
           </div>
         </div>
-        <div className='day'>Pazartesi</div>
+        <div className='day'>{currentWeather.day}</div>
       </div>
-      <button>Test</button>
+      <button onClick={handleNextDayWeather}>Test</button>
     </div>
   )
 }
